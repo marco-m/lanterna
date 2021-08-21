@@ -1,0 +1,6 @@
+config*.json
+TODO.md
+bin/
+.vagrant/
+doc/*graffle
+.vscode/

@@ -1,0 +1,28 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BRANCH: { sh: git branch --show-current }
+  VERSION: { sh: git describe --long --dirty --always }
+  # https://pkg.go.dev/cmd/link
+  # -s: Omit the symbol table and debug information.
+  # -w: Omit the DWARF symbol table.
+  #LDFLAGS: -w -s -X main.version={{.VERSION}}
+  LDFLAGS: -X main.version={{.VERSION}}
+
+tasks:
+
+  build:
+    desc: Build the lanterna executable
+    cmds:
+      - go build -o bin/lanterna -v -ldflags="{{.LDFLAGS}}" ./cmd/lanterna
+
+  clean:
+    desc: Delete build artifacts
+    cmds: [rm -rf bin/*]
+
+  test:
+    desc: Run the tests
+    cmds:
+      - go test ./...

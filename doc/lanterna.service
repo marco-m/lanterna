@@ -1,0 +1,16 @@
+[Unit]
+Description=lanterna IP address publisher
+Documentation=https://github.com/marco-m/lanterna
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=lanterna
+#RootDirectory=
+ExecStart=/usr/local/bin/lanterna \
+    --config=/usr/local/etc/lanterna/config.json \
+    run
+
+[Install]
+WantedBy=multi-user.target
