@@ -49,7 +49,7 @@ func drive(log zerolog.Logger) error {
 	case args.Init != nil:
 		return cmdInit(args)
 	case args.Run != nil:
-		return cmdRun(args, collect, postJSON)
+		return cmdRun(args)
 	default:
 		return fmt.Errorf("unwired command: %s", p.SubcommandNames())
 	}

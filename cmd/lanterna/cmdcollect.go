@@ -44,10 +44,5 @@ func collect(log zerolog.Logger) ([]string, error) {
 			ips = append(ips, ip.String())
 		}
 	}
-
-	if len(ips) == 0 {
-		log.Warn().Msg("could not find any IP address")
-	}
-
 	return ips, nil
 }

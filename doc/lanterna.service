@@ -5,9 +5,8 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-Type=oneshot
+Type=simple
 User=lanterna
-#RootDirectory=
 ExecStart=/usr/local/bin/lanterna \
     --config=/usr/local/etc/lanterna/config.json \
     run
