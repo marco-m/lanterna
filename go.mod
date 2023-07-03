@@ -1,6 +1,6 @@
 module github.com/marco-m/lanterna
 
-go 1.17
+go 1.20
 
 require (
 	github.com/alexflint/go-arg v1.4.3-0.20210821025918-ff38a63b36f6
