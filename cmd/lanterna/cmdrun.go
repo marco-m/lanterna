@@ -8,10 +8,15 @@ import (
 	"time"
 
 	"github.com/rs/xid"
+	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/host"
 )
 
-func cmdRun(cfg Args) error {
+type collectFn func(log zerolog.Logger) ([]string, error)
+
+type postJSONFn func(url string, msg map[string]string) error
+
+func cmdRun(cfg Args, collect collectFn, postJSON postJSONFn) error {
 	config, err := loadConfig(cfg.ConfigPath)
 	if err != nil {
 		return fmt.Errorf("run: %s", err)
@@ -48,6 +53,9 @@ func cmdRun(cfg Args) error {
 	fmt.Fprintf(&sb, "IP addresses:\n")
 	for _, ip := range ips {
 		fmt.Fprintf(&sb, "    %s\n", ip)
+	}
+	if len(ips) == 0 {
+		fmt.Fprintf(&sb, "    WARNING: none found\n")
 	}
 	// fmt.Fprintf(&sb, "```\n")
 

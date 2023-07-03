@@ -1,0 +1,9 @@
+{
+    "sinks": [
+        {
+            "name": "banana",
+            "type": "gchat",
+            "url": "http://mango.example"
+        }
+    ]
+}
