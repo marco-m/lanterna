@@ -26,27 +26,32 @@ func (pm *postMock) postJSON(url string, msg map[string]string) error {
 	return nil
 }
 
-var cfg = Args{
-	log:        zerolog.Logger{},
-	ConfigPath: "testdata/config.json",
+var config = configuration{
+	Sinks: []sink{
+		{
+			Name: "banana",
+			Type: "gchat",
+			URL:  "http://mango.example",
+		},
+	},
 }
 
-func TestCmdRunHappyPathMock(t *testing.T) {
+func TestRunHandleHappyPathMock(t *testing.T) {
 	collect := collectMock{ips: []string{"1.2.3.4"}}
 	post := postMock{}
 
-	err := cmdRun(cfg, collect.collect, post.postJSON)
+	err := runHandle(Args{}, config, "margherita", collect.collect, post.postJSON)
 
 	qt.Assert(t, qt.IsNil(err))
 	qt.Assert(t, qt.StringContains(post.url, "http://mango.example&threadKey="))
 	qt.Assert(t, qt.StringContains(post.msg["text"], "IP addresses:\n    1.2.3.4"))
 }
 
-func TestCmdRunNoAddressFoundSentAsWarningMock(t *testing.T) {
+func TestRunHandleNoAddressFoundSentAsWarningMock(t *testing.T) {
 	collect := collectMock{}
 	pMock := postMock{}
 
-	err := cmdRun(cfg, collect.collect, pMock.postJSON)
+	err := runHandle(Args{}, config, "margherita", collect.collect, pMock.postJSON)
 
 	qt.Assert(t, qt.IsNil(err))
 	qt.Assert(t, qt.StringContains(pMock.msg["text"], "IP addresses:\n    WARNING: none found"))

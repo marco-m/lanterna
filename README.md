@@ -36,7 +36,7 @@ $ lanterna <command> -h
 
 # Sink types
 
-Currently the only supported type is `gchat` (Google Chat).
+Currently, the only supported type is `gchat` (Google Chat).
 
 The message contains enough information to distinguish which host it is:
 
@@ -120,17 +120,7 @@ Look at the status:
 
 ```
 systemctl status lanterna.service
-○ lanterna.service - lanterna IP address publisher
-     Loaded: loaded (/etc/systemd/system/lanterna.service; enabled; vendor preset: disabled)
-     Active: inactive (dead) since ...
-    Process: ... ExecStart=/usr/local/bin/lanterna --config=/usr/local/etc/lanterna/config.json run (code=exited, status=0/SUCCESS)
 ```
-
-NOTE: for the time being, lanterna is not a service, it will run, started by systemd, and will terminate immediately. This doesn't mean that it failed.
-
-In the output above, although we have `Active: inactive (dead)`, we also have `(code=exited, status=0/SUCCESS)`.
-
-Look at the logs:
 
 ```
 sudo journalctl -e -u lanterna.service
