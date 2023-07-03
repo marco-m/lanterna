@@ -24,10 +24,11 @@ func loadConfig(fpath string) (configuration, error) {
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			return configuration{},
-				fmt.Errorf("config: %s"+
-					"\nRun 'lanterna init' to create a configuration file", err)
+				fmt.Errorf(
+					"config file %q: %s. Run 'lanterna init' to create a configuration file",
+					fpath, err)
 		}
-		return configuration{}, fmt.Errorf("load config: %s", err)
+		return configuration{}, fmt.Errorf("config file %q: %s", fpath, err)
 	}
 
 	var config configuration
@@ -36,7 +37,7 @@ func loadConfig(fpath string) (configuration, error) {
 	}
 
 	if err := validateConfig(config); err != nil {
-		return configuration{}, fmt.Errorf("load config: file: %s:\n%s", fpath, err)
+		return configuration{}, fmt.Errorf("config file %q: %s", fpath, err)
 	}
 
 	return config, nil
