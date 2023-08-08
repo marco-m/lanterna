@@ -3,13 +3,12 @@ package main
 import (
 	"encoding/base32"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/rs/xid"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/shirou/gopsutil/v3/host"
 )
 
@@ -28,11 +27,11 @@ func cmdRun(args Args) error {
 			return err
 		}
 		t := <-ticker.C
-		log.Info().Time("ticker", t).Msg("")
+		args.log.Info("ticker", "tick", t)
 	}
 }
 
-type collectFn func(log zerolog.Logger) ([]string, error)
+type collectFn func(log *slog.Logger) ([]string, error)
 
 type postJSONFn func(url string, msg map[string]string) error
 
@@ -44,13 +43,13 @@ func runHandle(args Args, config configuration, machineID string, collect collec
 		return fmt.Errorf("run: %s", err)
 	}
 	if len(ips) == 0 {
-		log.Warn().Msg("could not find any IP address")
+		args.log.Warn("could not find any IP address")
 	}
 
 	var hostname string
 	if hostname, err = os.Hostname(); err != nil {
 		hostname = fmt.Sprintf("hostname: %s", err)
-		log.Err(err).Msg("could not find hostname")
+		args.log.Error("could not find hostname")
 	}
 
 	bt, btErr := host.BootTime()
@@ -81,8 +80,10 @@ func runHandle(args Args, config configuration, machineID string, collect collec
 	// The 3-byte (2^24=16_777_216) machine ID is unique enough for this usage.
 	url := fmt.Sprintf("%s&threadKey=%s", sink.URL, machineID)
 
-	args.log.Info().Msg("Sending message")
+	args.log.Info("Sending message")
 	err = postJSON(url, map[string]string{"text": sb.String()})
-	args.log.Err(err).Msg("postJSON")
+	if err != nil {
+		args.log.Error("postJSON", "err", err)
+	}
 	return nil
 }

@@ -2,15 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
-	"time"
 
 	"github.com/alexflint/go-arg"
-	"github.com/rs/zerolog"
 )
 
 type Args struct {
-	log zerolog.Logger
+	log *slog.Logger
 
 	ConfigPath string `arg:"-c,--config" placeholder:"PATH" help:"Path to configuration file" default:"config.json"`
 
@@ -26,8 +25,7 @@ type InitCmd struct{}
 type RunCmd struct{}
 
 func main() {
-	wr := zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true, TimeFormat: time.RFC3339}
-	log := zerolog.New(wr).With().Timestamp().Logger()
+	log := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	if err := drive(log); err != nil {
 		fmt.Println("lanterna: error:", err)
@@ -35,7 +33,7 @@ func main() {
 	}
 }
 
-func drive(log zerolog.Logger) error {
+func drive(log *slog.Logger) error {
 	args := Args{log: log}
 	p := arg.MustParse(&args)
 

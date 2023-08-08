@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
-
-	"github.com/rs/zerolog"
 )
 
 func cmdCollect(cfg Args) error {
@@ -19,7 +18,7 @@ func cmdCollect(cfg Args) error {
 }
 
 // collect returns a list of the global unicast IP addresses present on the host.
-func collect(log zerolog.Logger) ([]string, error) {
+func collect(log *slog.Logger) ([]string, error) {
 	var ips []string
 
 	ifaces, err := net.Interfaces()
@@ -29,13 +28,13 @@ func collect(log zerolog.Logger) ([]string, error) {
 	for _, iface := range ifaces {
 		addrs, err := iface.Addrs()
 		if err != nil {
-			log.Err(err).Msg("iface.Addrs")
+			log.Error("iface.Addrs", "err", err)
 			continue
 		}
 		for _, addr := range addrs {
 			ip, _, err := net.ParseCIDR(addr.String())
 			if err != nil {
-				log.Err(err).Stringer("addr", addr).Msg("ParseCIDR")
+				log.Error("ParseCIDR", "addr", addr)
 				continue
 			}
 			if !ip.IsGlobalUnicast() {

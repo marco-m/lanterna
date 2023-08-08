@@ -1,17 +1,18 @@
 package main
 
 import (
+	"io"
+	"log/slog"
 	"testing"
 
 	"github.com/go-quicktest/qt"
-	"github.com/rs/zerolog"
 )
 
 type collectMock struct {
 	ips []string
 }
 
-func (cm *collectMock) collect(log zerolog.Logger) ([]string, error) {
+func (cm *collectMock) collect(log *slog.Logger) ([]string, error) {
 	return cm.ips, nil
 }
 
@@ -39,8 +40,9 @@ var config = configuration{
 func TestRunHandleHappyPathMock(t *testing.T) {
 	collect := collectMock{ips: []string{"1.2.3.4"}}
 	post := postMock{}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	err := runHandle(Args{}, config, "margherita", collect.collect, post.postJSON)
+	err := runHandle(Args{log: log}, config, "margherita", collect.collect, post.postJSON)
 
 	qt.Assert(t, qt.IsNil(err))
 	qt.Assert(t, qt.StringContains(post.url, "http://mango.example&threadKey="))
@@ -50,8 +52,9 @@ func TestRunHandleHappyPathMock(t *testing.T) {
 func TestRunHandleNoAddressFoundSentAsWarningMock(t *testing.T) {
 	collect := collectMock{}
 	pMock := postMock{}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	err := runHandle(Args{}, config, "margherita", collect.collect, pMock.postJSON)
+	err := runHandle(Args{log: log}, config, "margherita", collect.collect, pMock.postJSON)
 
 	qt.Assert(t, qt.IsNil(err))
 	qt.Assert(t, qt.StringContains(pMock.msg["text"], "IP addresses:\n    WARNING: none found"))
