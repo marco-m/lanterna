@@ -11,7 +11,7 @@ import (
 type Args struct {
 	log *slog.Logger
 
-	ConfigPath string `arg:"-c,--config" placeholder:"PATH" help:"Path to configuration file" default:"config.json"`
+	ConfigPath string `arg:"--config" placeholder:"PATH" help:"Path to configuration file" default:"config.json"`
 
 	Collect *CollectCmd `arg:"subcommand:collect" help:"Collect IP addresses and print them"`
 	Init    *InitCmd    `arg:"subcommand:init" help:"Create a configuration file"`

@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-// post issues a HTTP POST to url, with msg as body, JSON-encoded.
+// postJSON issues a HTTP POST to url, with msg as body, JSON-encoded.
 //
-// Unfortunately the GChat API for incoming webhooks wants the secrets as URL
-// parameters, thus we must redact the URL when logging.
+// Unfortunately the GChat API for incoming webhooks wants the secret as URL
+// parameter, thus we must redact the URL when logging.
 func postJSON(url string, msg map[string]string) error {
 	buf, err := json.Marshal(msg)
 	if err != nil {
@@ -48,24 +48,24 @@ func postJSON(url string, msg map[string]string) error {
 // Use this workaround only when you are forced to use an API that encodes
 // secrets in the URL instead of setting them in the request header.
 // If you have control of the API, please never encode secrets in the URL.
-// Readaction is applied as follows:
+// Redaction is applied as follows:
 // - removal of all query parameters
 // - removal of "username:password@" HTTP Basic Authentication
 // Warning: it is still possible that the redacted URL contains secrets, for
 // example if the secret is encoded in the path. Don't do this.
 func RedactURL(theURL *url.URL) *url.URL {
-	copy := *theURL
+	urlCopy := *theURL
 
 	// remove all query parameters
-	if copy.RawQuery != "" {
-		copy.RawQuery = "REDACTED"
+	if urlCopy.RawQuery != "" {
+		urlCopy.RawQuery = "REDACTED"
 	}
 	// remove password in user:password@host
-	if _, ok := copy.User.Password(); ok {
-		copy.User = url.UserPassword("REDACTED", "REDACTED")
+	if _, ok := urlCopy.User.Password(); ok {
+		urlCopy.User = url.UserPassword("REDACTED", "REDACTED")
 	}
 
-	return &copy
+	return &urlCopy
 }
 
 // RedactErrorURL returns a _best effort_ redacted copy of err. See

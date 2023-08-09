@@ -11,6 +11,8 @@ If you want to connect to a remote host and:
 
 then you can use `lanterna` to get the current IP address of the host and thus you will always be able to connect to it.
 
+Once configured to run as a service, it will send a message each 24h.
+
 # Usage
 
 ```
@@ -18,8 +20,7 @@ $ lanterna -h
 Usage: lanterna [--config PATH] <command> [<args>]
 
 Options:
-  --config PATH, -c PATH
-                         Path to configuration file [default: ./config.json]
+  --config PATH          Path to configuration file [default: ./config.json]
   --help, -h             display this help and exit
 
 Commands:
@@ -116,11 +117,13 @@ Tested on Linux and macOS, should run on any UNIX-like system. Should also run o
 
 ## Troubleshooting / looking at logs
 
-Look at the status:
+Status:
 
 ```
 systemctl status lanterna.service
 ```
+
+Logs:
 
 ```
 sudo journalctl -e -u lanterna.service
