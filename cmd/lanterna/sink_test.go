@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+
+	"github.com/go-quicktest/qt"
 )
 
 var testCases = []struct {
@@ -34,15 +36,11 @@ func TestRedactURL(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			urlo, err := url.Parse(tc.url)
-			if err != nil {
-				t.Fatal(err)
-			}
+			qt.Assert(t, qt.IsNil(err))
 
 			redacted := RedactURL(urlo)
 
-			if redacted.String() != tc.want {
-				t.Fatalf("got: %q; want %q", redacted, tc.want)
-			}
+			qt.Assert(t, qt.Equals(redacted.String(), tc.want))
 		})
 	}
 }
@@ -52,9 +50,7 @@ func TestRedactURLString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			redacted := RedactURLString(tc.url)
 
-			if redacted != tc.want {
-				t.Fatalf("got: %q; want %q", redacted, tc.want)
-			}
+			qt.Assert(t, qt.Equals(redacted, tc.want))
 		})
 	}
 }
@@ -67,15 +63,11 @@ func TestRedactErrorURL(t *testing.T) {
 			redacted := RedactErrorURL(&urlErr)
 
 			want := fmt.Sprintf("%s %q: banana", http.MethodGet, tc.want)
-			if redacted.Error() != want {
-				t.Fatalf("got: %q; want %q", redacted, want)
-			}
+			qt.Assert(t, qt.Equals(redacted.Error(), want))
 		})
 	}
 	// in case the error is not url.Error:
 	fooErr := errors.New("foo")
 	redacted := RedactErrorURL(fooErr)
-	if redacted != fooErr {
-		t.Fatalf("got: %q; want: %q", redacted, fooErr)
-	}
+	qt.Assert(t, qt.ErrorIs(redacted, fooErr))
 }
